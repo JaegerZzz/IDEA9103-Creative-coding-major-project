@@ -207,13 +207,6 @@ function dropCircles() {
   }
 }
 
-
-function resetCircles() {
-  for (let i = 0; i < fallingCircles.length; i++) {
-    fallingCircles[i].y = initialPositions[i].y;
-    fallingCircles[i].diam = initialPositions[i].diam;
-  }
-}
 window.onload = function () {
   setTimeout(simulateMouseClick, 500); // simulate mouse click after 0.5s
 }
