@@ -1,13 +1,11 @@
 let circles = [];
 let scl = 1;
-let fallDelay = 75; // 下落延迟1秒
-let fallingCircles = []; // 存储要下落的圆
-
+let fallDelay = 75; // circle fall time delay 0.75s
+let fallingCircles = []; 
+let particles = []; 
 
 function setup() {
-  
   createCanvas(windowWidth, windowHeight);
-
   rectMode(CORNERS);
   strokeWeight(3);
   circles.push(new HalfCircle(166, 482, 40, 0, PI, false));
@@ -48,14 +46,14 @@ function setup() {
   circles.push(new HalfCircle(322, 206, 35, 1.3, PI + 1.9, false));
   circles.push(new HalfCircle(317, 236, 36, 1.1, PI + 2.1, false));
 
-// 选择要下落的圆
+// upper part circles fall
   for (let i = 9; i < 49; i++) {
     fallingCircles.push(circles[i]);
   }
-
+// auto-refresh each 6s
   setInterval(function () {
     location.reload();
-  }, 10000); // 10秒后刷新页面
+  }, 6000); 
 }
 
 
@@ -67,7 +65,26 @@ function draw() {
   scale(scl);
 
   translate((width - scl * 770) / 2, (height - scl * 600) / 2);
-  // black stroke
+  
+// blue point as wind
+if (random(1) < 0.9) {  //wind point density
+  let x = -300; // starting x position 
+  let y = random(1, 538); // random starting y position
+  let p = new Particle(x, y);
+  particles.push(p);
+}
+
+// repeat wind blue point
+for (let i = particles.length - 1; i >= 0; i--) {
+  let p = particles[i];
+  p.update();
+  p.display();
+  if (p.isOffscreen()) {
+    particles.splice(i, 1); // delete out point
+  }
+}
+
+// black stroke
   noFill();
   stroke(0);
   for (let i = 0; i < circles.length; i++) {
@@ -153,15 +170,40 @@ class HalfCircle {
 
 }
 
+//blue wind point
+class Particle {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.velocity = createVector(random(4, 10), 0); // move direction
+    this.color = color(0, 0, 255); // color blue
+  }
+
+  update() {
+    this.x += this.velocity.x;
+  }
+
+  display() {
+    fill(this.color);
+    noStroke();
+    ellipse(this.x, this.y, 5, 5);
+  }
+
+  isOffscreen() {
+    return this.x > width; // check point position
+  }
+}
+
+//drop
 function simulateMouseClick() {
-  setInterval(dropCircles, fallDelay); // 每秒触发一次下落函数
+  setInterval(dropCircles, fallDelay); // trigger drop
 }
 
 function dropCircles() {
   for (let i = 0; i < fallingCircles.length; i++) {
-    fallingCircles[i].y += random(-10, 10); // 这里你可以根据需要调整下落的速度
-    fallingCircles[i].x += random(-5, 5); // 这里你可以根据需要调整下落的速度
-    fallingCircles[i].diam *= random(0.9, 1.05); // 逐渐减小直径，可以根据需要调整缩小的速度
+    fallingCircles[i].y += random(-5, 10); // random x direction speed 
+    fallingCircles[i].x += random(-5, 15); // random y dircetion speed
+    fallingCircles[i].diam *= random(0.9, 1); // random scaling down 
   }
 }
 
@@ -173,5 +215,5 @@ function resetCircles() {
   }
 }
 window.onload = function () {
-  setTimeout(simulateMouseClick, 500); // 0.5秒后模拟鼠标点击
+  setTimeout(simulateMouseClick, 500); // simulate mouse click after 0.5s
 }
