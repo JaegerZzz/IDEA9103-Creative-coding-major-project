@@ -1,8 +1,7 @@
 let circles = [];
 let scl = 1;
-let fallDelay = 100; // 下落延迟1秒
+let fallDelay = 75; // 下落延迟1秒
 let fallingCircles = []; // 存储要下落的圆
-
 
 
 function setup() {
@@ -49,14 +48,14 @@ function setup() {
   circles.push(new HalfCircle(322, 206, 35, 1.3, PI + 1.9, false));
   circles.push(new HalfCircle(317, 236, 36, 1.1, PI + 2.1, false));
 
-  // 选择要下落的圆
+// 选择要下落的圆
   for (let i = 9; i < 49; i++) {
     fallingCircles.push(circles[i]);
   }
 
   setInterval(function () {
     location.reload();
-  }, 6000); // 6秒后刷新页面
+  }, 10000); // 10秒后刷新页面
 }
 
 
@@ -160,11 +159,19 @@ function simulateMouseClick() {
 
 function dropCircles() {
   for (let i = 0; i < fallingCircles.length; i++) {
-    fallingCircles[i].y += random( 10, 20); // 下落速度
-    fallingCircles[i].diam *= 0.9; // 缩小速度
+    fallingCircles[i].y += random(-10, 10); // 这里你可以根据需要调整下落的速度
+    fallingCircles[i].x += random(-5, 5); // 这里你可以根据需要调整下落的速度
+    fallingCircles[i].diam *= random(0.9, 1.05); // 逐渐减小直径，可以根据需要调整缩小的速度
   }
 }
 
+
+function resetCircles() {
+  for (let i = 0; i < fallingCircles.length; i++) {
+    fallingCircles[i].y = initialPositions[i].y;
+    fallingCircles[i].diam = initialPositions[i].diam;
+  }
+}
 window.onload = function () {
   setTimeout(simulateMouseClick, 500); // 0.5秒后模拟鼠标点击
 }
